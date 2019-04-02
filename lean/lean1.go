@@ -131,7 +131,7 @@ var arr = [...]string{"a", "b"}
 var s1 = []int{1, 2, 3}
 var s2 = s1[:] // 重置
 var s3 []int
-var s4 = make([]int, 5, 100)
+var s4 []int = make([]int, 5, 100)
 
 func appendAndcopy() {
 	s4 = append(s4, 1, 2, 3, 4)
