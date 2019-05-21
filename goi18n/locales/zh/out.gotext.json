@@ -1,0 +1,35 @@
+{
+    "language": "zh",
+    "messages": [
+        {
+            "id": "Hello, {Host}",
+            "message": "Hello, {Host}",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Host",
+                    "string": "%[1]v",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "html.EscapeString(r.Host)"
+                }
+            ]
+        },
+        {
+            "id": "Hi, {Host}",
+            "message": "Hi, {Host}",
+            "translation": "",
+            "placeholders": [
+                {
+                    "id": "Host",
+                    "string": "%[1]v",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "html.EscapeString(r.Host)"
+                }
+            ]
+        }
+    ]
+}
