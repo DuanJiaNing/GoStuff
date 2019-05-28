@@ -47,7 +47,7 @@ func findType(i interface{}) {
 	}
 }
 
-func main5() {
+func main7() {
 	findType("Naveen")
 	st := St("我的字符串")
 	findType(st)
@@ -186,6 +186,22 @@ func range_() {
 
 }
 
+func main() {
+	arr := []int{}
+	arr = append(arr, 1, 2, 3, 4, 5, 6, 7)
+	//s1 := arr[:]
+	s2 := arr[2:5]
+	s3 := arr[2:]
+	s4 := arr[:3]
+
+	//fmt.Println(s1)
+	fmt.Println(s2)
+	fmt.Println(s3)
+	fmt.Println(s4)
+	fmt.Println(append(arr[:2], arr[3:]...))
+
+}
+
 func slice() {
 	s := []int{1, 2, 3} // cp = len = 3
 
@@ -306,7 +322,7 @@ func m1() {
 //}
 
 func init() {
-	P("Init first")
+	//P("Init first")
 }
 
 //func main() {
@@ -341,7 +357,7 @@ func sqrt(f float64) (float32, error) {
 	return -1, nil
 }
 
-func main() {
+func main5() {
 	P(sqrt(-1))
 
 	i2, e := sqrt(-1)
