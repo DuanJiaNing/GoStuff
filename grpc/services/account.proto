@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package account;
+
+service Account {
+    rpc GetAccount (Id) returns (AccountReply) {
+    }
+    rpc AddAccount (AccountRequest) returns (AccountReply) {
+    }
+}
+
+message Id {
+    int32 id = 1;
+}
+
+message AccountRequest {
+    Id id = 1;
+    string name = 2;
+    bool married = 3;
+}
+
+message AccountReply {
+    Id id = 1;
+    string name = 2;
+    bool married = 3;
+    int64 createTime = 4;
+}
