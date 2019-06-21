@@ -39,6 +39,7 @@ func main() {
 	time.Sleep(time.Second * 4)
 }
 
+// 只读 chan: time Ticker Timer
 func pc6() {
 	ticker := time.NewTicker(time.Second)
 	timer := time.NewTimer(time.Second * 2)
@@ -59,6 +60,7 @@ stop:
 	p("select finished,count is ", count)
 }
 
+// 主 goroutine 等待子 goroutine 结束
 func pc5() {
 	exit := make(chan int)
 
@@ -73,6 +75,7 @@ func pc5() {
 
 }
 
+// 不阻塞 chan，加上缓冲参数
 func pc4() {
 	c := make(chan int, 10) // 缓冲通道
 
@@ -95,11 +98,12 @@ func pc3() {
 	//}
 }
 
+// 单向 chan
 func pc2() {
 
-	c := make(chan<- int) // 只能发送
+	c := make(chan<- int) // 只写：只能发送
 	//<- c  illegal
-	cc := make(<-chan int) // 只能接收
+	cc := make(<-chan int) // 只读：只能接收
 	//cc <- 4 illegal
 	go func() {
 		<-cc
@@ -108,6 +112,7 @@ func pc2() {
 
 }
 
+// 一个 goroutine 中读，匹配另一个 goroutine 中的写
 func pc1() {
 
 	p("main goroutine")
@@ -142,6 +147,7 @@ func p(o ...interface{}) {
 	fmt.Println(o...)
 }
 
+// 消费 chan 中数据，并作出回应
 func printer(c chan int) {
 	// 开始无限循环等待数据
 	for {
@@ -158,6 +164,7 @@ func printer(c chan int) {
 	c <- 0
 }
 
+// 发送数据到 chan
 func pc() {
 	// 创建一个channel
 	c := make(chan int)
@@ -173,6 +180,7 @@ func pc() {
 	<-c
 }
 
+// 模拟 rpc 调用方
 func RPCClient(ch chan string, req string) (string, error) {
 	ch <- req
 	select {
@@ -183,6 +191,7 @@ func RPCClient(ch chan string, req string) (string, error) {
 	}
 }
 
+// 模拟 rpc 调用服务提供方
 func RPCServer(ch chan string) {
 	for {
 		data := <-ch
