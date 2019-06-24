@@ -187,6 +187,11 @@ func range_() {
 }
 
 func main() {
+	fmt.Println([...]int{3: 4, 5: 3}) // a: b 表示下标为 a 的位置值为 b
+	fmt.Println([...]int{2: 2})
+}
+
+func main41() {
 	arr := []int{}
 	arr = append(arr, 1, 2, 3, 4, 5, 6, 7)
 	//s1 := arr[:]
