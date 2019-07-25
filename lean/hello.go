@@ -187,8 +187,71 @@ func range_() {
 }
 
 func main() {
-	fmt.Println([...]int{3: 4, 5: 3}) // a: b 表示下标为 a 的位置值为 b
-	fmt.Println([...]int{2: 2})
+	//fmt.Println([...]int{3: 4, 5: 3}) // a: b 表示下标为 a 的位置值为 b
+	//fmt.Println([...]int{2: 2})
+	fmt.Println(test())  // 13
+	fmt.Println(test1()) // 1 13 ?
+	fmt.Println(test2()) // C
+	fmt.Println(test3()) // A
+	fmt.Println(test4()) // 13 13
+	fmt.Println(test5()) // 13 13
+}
+
+func test3() error {
+	err := errors.New("B")
+	defer func() {
+		err = errors.New("C") // write original var, inner func scope
+		// write will influence err, return C
+	}()
+
+	err = errors.New("A")
+	return err // return value is copied out of func scape(fixed)
+}
+
+func test2() (err error) {
+	err = errors.New("B")
+	defer func() {
+		err = errors.New("C") // write to err which defined where out of func scape
+		// write will influence err, return C
+	}()
+
+	err = errors.New("A")
+	return err // temporary store, defer write will change it
+}
+
+func test() (i int) {
+	i++
+	defer func() {
+		i = 13
+	}()
+
+	return
+}
+
+func test4() (i int) {
+	defer func() {
+		fmt.Print(i, " ") // 闭包，执行匿名方法时才去取 i 的值
+	}()
+
+	i = 13
+	return
+}
+
+func test5() int {
+	i := 0
+	defer func() {
+		fmt.Print(i, " ")
+	}()
+
+	i = 13
+	return i
+}
+
+func test1() (i int) {
+	defer fmt.Print(i, " ") // 此时值 0 立刻传递给Print方法了，会输出 0
+
+	i = 13
+	return
 }
 
 func main41() {
