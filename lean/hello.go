@@ -189,21 +189,25 @@ func range_() {
 func main() {
 	//fmt.Println([...]int{3: 4, 5: 3}) // a: b 表示下标为 a 的位置值为 b
 	//fmt.Println([...]int{2: 2})
+
+	// defer 后方法为匿名方法，则访问构成闭包，defer 执行时按地址访问
+	// defer 后直接调用方法，不构成闭包，参数拷贝一份，defer 访问拷贝发生时的值
+	// return 把值赋给接收返回值的变量（声明方法时定义的变量）。没有就创建一个
 	fmt.Println(test())  // 13
 	fmt.Println(test1()) // 0 13
 	fmt.Println(test2()) // C
-	fmt.Println(test3()) // A
+	fmt.Println(test3()) // C A
 	fmt.Println(test4()) // 13 13
 	fmt.Println(test5()) // 13 13
 	fmt.Println(test6()) // 13 13
+	fmt.Println(test7()) // 14 13
 }
 
-// defer 后方法为匿名方法，则访问构成闭包，defer 执行时按地址访问
-// defer 后直接调用方法，不构成闭包，参数拷贝一份，defer 访问拷贝发生时的值
 func test3() error {
 	err := errors.New("B")
 	defer func() {
 		err = errors.New("C") // write original var, inner func scope
+		fmt.Print(err, " ")
 		// write will influence err, return C
 	}()
 
@@ -245,6 +249,17 @@ func test5() int {
 	i := 0
 	defer func() {
 		fmt.Print(i, " ") // 闭包，i被分配到栈外
+	}()
+
+	i = 13
+	return i
+}
+
+func test7() int {
+	i := 0
+	defer func() {
+		i = 14
+		fmt.Print(i, " ")
 	}()
 
 	i = 13
