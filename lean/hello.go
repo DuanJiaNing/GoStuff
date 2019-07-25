@@ -190,13 +190,16 @@ func main() {
 	//fmt.Println([...]int{3: 4, 5: 3}) // a: b 表示下标为 a 的位置值为 b
 	//fmt.Println([...]int{2: 2})
 	fmt.Println(test())  // 13
-	fmt.Println(test1()) // 1 13 ?
+	fmt.Println(test1()) // 0 13
 	fmt.Println(test2()) // C
 	fmt.Println(test3()) // A
 	fmt.Println(test4()) // 13 13
 	fmt.Println(test5()) // 13 13
+	fmt.Println(test6()) // 13 13
 }
 
+// defer 后方法为匿名方法，则访问构成闭包，defer 执行时按地址访问
+// defer 后直接调用方法，不构成闭包，参数拷贝一份，defer 访问拷贝发生时的值
 func test3() error {
 	err := errors.New("B")
 	defer func() {
@@ -230,6 +233,7 @@ func test() (i int) {
 
 func test4() (i int) {
 	defer func() {
+		// 从编译器的角度看此时 i 是变量，需要按地址取值
 		fmt.Print(i, " ") // 闭包，执行匿名方法时才去取 i 的值
 	}()
 
@@ -240,14 +244,23 @@ func test4() (i int) {
 func test5() int {
 	i := 0
 	defer func() {
-		fmt.Print(i, " ")
+		fmt.Print(i, " ") // 闭包，i被分配到栈外
 	}()
 
 	i = 13
 	return i
 }
 
+func test6() int {
+	i := 0
+	defer fmt.Print(i, " ") // i 复制了一份，不构成闭包，i 还是在栈内分配
+
+	i = 13
+	return i
+}
+
 func test1() (i int) {
+	// 从编译器的角度看此时 i 是常量，值为 0
 	defer fmt.Print(i, " ") // 此时值 0 立刻传递给Print方法了，会输出 0
 
 	i = 13
