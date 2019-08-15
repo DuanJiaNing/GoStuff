@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"sort"
 	"time"
@@ -17,38 +18,84 @@ type nn1 struct {
 
 type Year int
 
+// FormatTime format time as string
+func FormatTime(t time.Time) string {
+	const format = "20060101T01001Z"
+	return t.Format(time.RFC3339)
+}
+
 func main() {
 
-	ys := []Year{2011, 2013, 2004, 2017, 2014, 2015, 2010, 2018, 2019, 2020}
-	sort.SliceStable(ys, func(i, j int) bool {
-		return ys[i] < ys[j]
-	})
-	fmt.Println(ys)
-	// [2004 2010 2011 2013 2014 2015 2017]
+	//fmt.Println(MergeYears([]Year{2011, 2013, 2004, 2017, 2014, 2015, 2010, 2018, 2019, 2020}))
+	//fmt.Println(math.MaxFloat32)
+	//fmt.Println(float32(math.MaxFloat32))
+	//fmt.Println(-math.MaxFloat32)
+	//fmt.Println(float32(-math.MaxFloat32))
 
-	var ys1 [][]int
-	ysc := []int{int(ys[0]), 1}
-	las := ys[0]
-	for i := 1; i < len(ys); i++ {
-		cur := ys[i]
-		if cur-las == 1 {
-			ysc[1]++
-		} else {
-			ys1 = append(ys1, ysc)
-			ysc = []int{int(cur), 1}
-		}
+	//fmt.Println(FormatTime(time.Now()))
 
-		if i == len(ys)-1 {
-			ys1 = append(ys1, ysc)
-		}
-		las = cur
-	}
-	fmt.Println(ys1)
+	//fmt.Println(time.Now())
+	//var f float32
+	//var f6 float64
+	//var b bool
+	//fmt.Println(f, f6, b)
+
+	t()
 
 	//fmt.Println(mapMonthToQuarter(time.February))
 	//fmt.Println(mapMonthToQuarter(time.May))
 	//fmt.Println(mapMonthToQuarter(time.September))
 	//fmt.Println(mapMonthToQuarter(time.October))
+}
+
+func t() {
+	type C struct {
+		d string
+	}
+
+	type a struct {
+		A []*C
+	}
+
+	type A struct {
+		b []byte
+	}
+
+	bytes, err := json.Marshal(a{A: []*C{{d: "a"}, {d: "b"}}}.A)
+	fmt.Print(err)
+
+	aa := &[]*C{} // 指针类型
+	err = json.Unmarshal(bytes, aa)
+	fmt.Print(err)
+
+	fmt.Print(aa)
+}
+
+func MergeYears(years []Year) [][]int {
+	sort.SliceStable(years, func(i, j int) bool {
+		return years[i] < years[j] // asc
+	})
+
+	var ys [][]int
+	ysRange := []int{int(years[0]), 1}
+	last := years[0]
+	length := len(years)
+	for i := 1; i < length; i++ {
+		cur := years[i]
+		if cur-last == 1 {
+			ysRange[1]++
+		} else {
+			ys = append(ys, ysRange)
+			ysRange = []int{int(cur), 1}
+		}
+
+		if i == length-1 {
+			ys = append(ys, ysRange)
+		}
+		last = cur
+	}
+
+	return ys
 }
 
 type quarter int
