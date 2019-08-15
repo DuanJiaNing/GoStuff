@@ -30,6 +30,7 @@ func main() {
 	//fmt.Println(math.MaxFloat32)
 	//fmt.Println(float32(math.MaxFloat32))
 	//fmt.Println(-math.MaxFloat32)
+
 	//fmt.Println(float32(-math.MaxFloat32))
 
 	//fmt.Println(FormatTime(time.Now()))
