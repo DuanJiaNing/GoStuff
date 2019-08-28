@@ -24,9 +24,16 @@ func FormatTime(t time.Time) string {
 	return t.Format(time.RFC3339)
 }
 
+var c map[string]string = nil
+
 func main() {
 
-	//fmt.Println(MergeYears([]Year{2011, 2013, 2004, 2017, 2014, 2015, 2010, 2018, 2019, 2020}))
+	//for e := range c {
+	//	fmt.Print(e)
+	//}
+
+	//fmt.Print(	time.Date(2008, time.January, 0, 0, 0, 0, 0, time.UTC))
+	fmt.Println(MergeYears([]Year{2015,2018,2018,2016,2016}))
 	//fmt.Println(math.MaxFloat32)
 	//fmt.Println(float32(math.MaxFloat32))
 	//fmt.Println(-math.MaxFloat32)
@@ -41,7 +48,7 @@ func main() {
 	//var b bool
 	//fmt.Println(f, f6, b)
 
-	t()
+	//t()
 
 	//fmt.Println(mapMonthToQuarter(time.February))
 	//fmt.Println(mapMonthToQuarter(time.May))
@@ -71,8 +78,11 @@ func t() {
 
 	fmt.Print(aa)
 }
-
 func MergeYears(years []Year) [][]int {
+	if len(years) == 1 {
+		return [][]int{{int(years[0]), 1}}
+	}
+
 	sort.SliceStable(years, func(i, j int) bool {
 		return years[i] < years[j] // asc
 	})
@@ -83,6 +93,10 @@ func MergeYears(years []Year) [][]int {
 	length := len(years)
 	for i := 1; i < length; i++ {
 		cur := years[i]
+		if cur == last {
+			goto append
+		}
+
 		if cur-last == 1 {
 			ysRange[1]++
 		} else {
@@ -90,6 +104,7 @@ func MergeYears(years []Year) [][]int {
 			ysRange = []int{int(cur), 1}
 		}
 
+	append:
 		if i == length-1 {
 			ys = append(ys, ysRange)
 		}
