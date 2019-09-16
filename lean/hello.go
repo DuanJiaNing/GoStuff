@@ -71,6 +71,15 @@ func (ms MyString) FindVowels() []rune {
 	return vowels
 }
 
+func fun() {
+	str := fmt.Sprintf(`
+this is a string from %s
+`, "david")
+
+	fmt.Println(str)
+
+}
+
 func main3() {
 	name := MyString("Sam Anderson") // 类型转换
 	var v VowelsFinder               // 定义一个接口类型的变量
