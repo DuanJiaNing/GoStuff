@@ -28,12 +28,17 @@ var c map[string]string = nil
 
 func main() {
 
+	// remove item from slice
+	s := []int{2, 3, 4, 5, 6}
+	i := 2
+	fmt.Println(append(s[:i], s[i+1:]...)) // 2 3 5 6
+
 	//for e := range c {
 	//	fmt.Print(e)
 	//}
 
 	//fmt.Print(	time.Date(2008, time.January, 0, 0, 0, 0, 0, time.UTC))
-	fmt.Println(MergeYears([]Year{2015,2018,2018,2016,2016}))
+	fmt.Println(MergeYears([]Year{2015, 2018, 2018, 2016, 2016}))
 	//fmt.Println(math.MaxFloat32)
 	//fmt.Println(float32(math.MaxFloat32))
 	//fmt.Println(-math.MaxFloat32)
