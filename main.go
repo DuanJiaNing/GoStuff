@@ -26,7 +26,21 @@ func FormatTime(t time.Time) string {
 
 var c map[string]string = nil
 
+type vl int
+
 func main() {
+	a, b, c, d := vl(1), vl(2), vl(3), vl(8)
+	vs := []*vl{&a, &b, &c}
+	dst := make([]*vl, len(vs))
+	copy(dst, vs)
+	vs[1] = &d
+
+	fmt.Println(vs)
+	fmt.Println(dst)
+
+}
+
+func main1() {
 
 	// remove item from slice
 	s := []int{2, 3, 4, 5, 6}

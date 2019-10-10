@@ -7,9 +7,9 @@ import (
 )
 
 var (
-	k1 = "%s went to %s."
-	k2 = "%s has been stolen."
-	k3 = "How are you?"
+	k1 = "k1"
+	k2 = "k2"
+	k3 = "k3"
 
 	// 1 增加 key
 )
