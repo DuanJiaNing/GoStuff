@@ -3,9 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/rs/cors"
-	"net/http"
 	"sort"
+	"strings"
 	"time"
 )
 
@@ -31,9 +30,10 @@ var c map[string]string = nil
 type vl int
 
 func main() {
+	fmt.Println(len(strings.Split("a,a", ",")))
+}
 
-	handler := cors.AllowAll().Handler(handle.Handler)
-	http.ListenAndServe("",handler)
+func func1() {
 
 	a, b, c, d := vl(1), vl(2), vl(3), vl(8)
 	vs := []*vl{&a, &b, &c}
@@ -45,6 +45,9 @@ func main() {
 	fmt.Println(dst)
 
 }
+
+//handler := cors.AllowAll().Handler(handle.Handler)
+//http.ListenAndServe("",handler)
 
 func main1() {
 
