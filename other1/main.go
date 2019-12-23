@@ -11,6 +11,8 @@ import (
 //import pk1 "GoStuff/pkg1"
 
 type n1 struct {
+	a string
+	b string
 }
 
 type nn1 struct {
@@ -31,6 +33,7 @@ type vl int
 
 func main() {
 	fmt.Println(len(strings.Split("a,a", ",")))
+
 }
 
 func func1() {
