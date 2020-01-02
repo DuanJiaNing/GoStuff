@@ -2,6 +2,7 @@ package main
 
 import (
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 )
@@ -33,7 +34,8 @@ func fileUpload(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		log.Println(part.FormName(), part.FileName())
+		all, err := ioutil.ReadAll(part)
+		log.Println(part.FormName(), part.FileName(), len(all), err)
 	}
 }
 

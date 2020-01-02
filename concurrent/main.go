@@ -17,6 +17,10 @@ func init() {
 }
 
 func main() {
+	fmt.Println(1 << 10)
+}
+
+func main3() {
 
 	//pc1()
 	//pc()
