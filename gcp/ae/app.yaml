@@ -1,0 +1,11 @@
+runtime: go113
+env: standard
+
+env_variables:
+  PORT: 80
+  GCP_PROJECT_ID: duan
+
+handlers:
+  - url: /api/.*
+    script: auto
+    secure: always
