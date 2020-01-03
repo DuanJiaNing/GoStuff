@@ -1,14 +1,16 @@
 package internal
 
 import (
-	"cloud.google.com/go/logging"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"strings"
 	"sync"
 	"time"
+
+	"cloud.google.com/go/logging"
 
 	netcontext "golang.org/x/net/context"
 )
@@ -43,15 +45,21 @@ func FlushLog(ctx netcontext.Context) {
 
 	client, err := logging.NewClient(ctx, os.Getenv("GCP_PROJECT_ID"))
 	if err != nil {
-		fmt.Printf("got error when create log client: %v", err)
+		log.Printf("got error when create log client: %v", err)
 		// TODO logs lost
 		return
 	}
 
 	trace := content.request.Header.Get("X-Cloud-Trace-Context")
-	//log.Printf("X-Cloud-Trace-Context: %s", s)
+	if len(trace) == 0 {
+		log.Print("failed to get X-Cloud-Trace-Context from request heard")
+		// TODO logs lost
+		return
+	}
+
+	traceID := fmt.Sprintf("projects/%s/traces/%s", os.Getenv("GCP_PROJECT_ID"), trace[:32])
+	log.Printf("X-Cloud-Trace-Context: %s, traceID: %s", trace, traceID)
 	appLogger := client.Logger(appLogName)
-	traceID := fmt.Sprintf("projects/%s/traces/%s", os.Getenv("GCP_PROJECT_ID"), trace)
 	for _, l := range content.pendingLogs {
 		appLogger.Log(logging.Entry{
 			Timestamp: l.Timestamp,
@@ -61,7 +69,7 @@ func FlushLog(ctx netcontext.Context) {
 		})
 	}
 	if err := appLogger.Flush(); err != nil {
-		fmt.Printf("got error when flush log: %v", err)
+		log.Printf("got error when flush log: %v", err)
 		return
 	}
 }
