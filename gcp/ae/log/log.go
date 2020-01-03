@@ -12,7 +12,7 @@ func Flush(ctx context.Context) {
 	internal.FlushLog(ctx)
 }
 
-func EmbedToContext(r *http.Request) context.Context {
+func NewContext(r *http.Request) context.Context {
 	return internal.WithLogContentValue(r)
 }
 
