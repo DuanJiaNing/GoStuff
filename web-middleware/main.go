@@ -8,13 +8,9 @@ import (
 	_ "GoStuff/web-middleware/handler"
 )
 
-func init() {
-	http.Handle("/", app.Router)
-}
-
 func main() {
 	log.Println("Listening on port 8080")
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	if err := http.ListenAndServe(":8080", app.Router); err != nil {
 		log.Fatal(err)
 	}
 }

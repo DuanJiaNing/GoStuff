@@ -6,16 +6,16 @@ import (
 	"regexp"
 )
 
-type Middleware func(handler http.Handler) http.Handler
+type MiddlewareFunc func(handler http.Handler) http.Handler
 
 type Router struct {
-	middlewareChain []Middleware
+	middlewareChain []MiddlewareFunc
 	mux             map[string]http.Handler
 }
 
 func NewRouter() *Router {
 	return &Router{
-		middlewareChain: []Middleware{},
+		middlewareChain: []MiddlewareFunc{},
 		mux:             make(map[string]http.Handler),
 	}
 }
@@ -41,7 +41,7 @@ func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func (r *Router) Use(m Middleware) {
+func (r *Router) Use(m MiddlewareFunc) {
 	r.middlewareChain = append(r.middlewareChain, m)
 }
 
