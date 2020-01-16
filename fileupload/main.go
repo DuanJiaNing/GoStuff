@@ -35,7 +35,11 @@ func fileUpload(w http.ResponseWriter, r *http.Request) {
 		}
 
 		all, err := ioutil.ReadAll(part)
-		log.Println(part.FormName(), part.FileName(), len(all), err)
+		if part.FormName() == "text_a" {
+			log.Println(part.FormName(), part.FileName(), len(all), string(all), err)
+		} else {
+			log.Println(part.FormName(), part.FileName(), len(all), err)
+		}
 	}
 }
 
