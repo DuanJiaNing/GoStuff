@@ -1,0 +1,13 @@
+runtime: go112
+env: standard
+service: default
+
+env_variables:
+#  PORT: 80
+
+handlers:
+  - url: /.*
+    script: auto
+    secure: always
+
+instance_class: F4
