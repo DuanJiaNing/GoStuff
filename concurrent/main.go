@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"strconv"
 	"time"
 )
 
@@ -16,7 +17,7 @@ func init() {
 	grc1 = make(chan map[string]interface{})
 }
 
-func main() {
+func main6() {
 	fmt.Println(1 << 10)
 }
 
@@ -215,4 +216,48 @@ func main1() {
 	} else {
 		fmt.Println("client received", recv)
 	}
+}
+
+type Obj struct {
+	tm time.Time
+}
+
+func main() {
+	s := `W/"4619f22a8bfeea0f105323899ff4e22d"`
+	fmt.Println(s[3 : len(s)-1])
+}
+
+func main11() {
+	sc := make(chan interface{}, 5)
+	errSignal := make(chan error)
+	for i := 0; i < 3; i++ {
+		go func(index int) {
+			if index == 1 {
+				errSignal <- errors.New("err")
+			}
+
+			fmt.Println(time.Now(), " deliver ", index)
+			sc <- strconv.Itoa(index)
+			time.Sleep(time.Second * 2)
+		}(i)
+	}
+
+	reciveCount := 0
+fn:
+	for {
+		select {
+		case err := <-errSignal:
+			fmt.Println(time.Now(), err)
+			break fn
+		case l := <-sc:
+			reciveCount++
+			fmt.Println(time.Now(), " append ", l)
+			if reciveCount == 3 {
+				break fn
+			}
+		}
+	}
+
+	fmt.Println(time.Now(), " close")
+
 }
