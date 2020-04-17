@@ -2,24 +2,24 @@ package main
 
 import (
 	"fmt"
-	"time"
+	"path"
+	"strings"
 )
 
 func main() {
-	flushed := make(chan struct{})
-	go func() {
-		defer func() {
-			close(flushed)
-			fmt.Println("chanel closed")
-		}()
-		anth()
-	}()
-	flushed <- struct{}{} // Will panic.
-	<-flushed
-	fmt.Println("closed")
+	fmt.Println(test(""))
+	fmt.Println(test2(""))
 }
 
-func anth() {
-	fmt.Println("sleeping...")
-	time.Sleep(4 * time.Second)
+func test(adminLevel string) string {
+	parts := strings.Split(adminLevel, "/")
+	parts = parts[:len(parts)-1]
+	return strings.Join(parts, "/")
+}
+
+func test2(adminLevel string) string {
+	if strings.IndexAny(adminLevel,"/") == -1 {
+		return ""
+	}
+	return path.Dir(adminLevel)
 }
