@@ -1,7 +1,7 @@
 package main
 
 import (
-	"GoStuff/formain/two1/job"
+	"GoStuff/formain/two1/task"
 	"fmt"
 	"github.com/ivpusic/grpool"
 	"time"
@@ -27,15 +27,62 @@ func main2() {
 	time.Sleep(1 * time.Second)
 }
 
-func main() {
-	executor := job.NewExecutor()
+func main122() {
+	executor := task.NewExecutor()
 	defer executor.Release()
-	for i := 0; i < 100000; i++ {
-		//count := i
+	for i := 0; i < 10; i++ {
+		c := i
 		executor.Add(func() {
-			//fmt.Printf("%d_%d  ", count, runtime.NumGoroutine())
 			time.Sleep(2 * time.Second)
+			fmt.Printf("rs%d", c)
 		})
 	}
 	executor.WaitAll()
+}
+
+type loader struct {
+}
+
+func (l loader) Load(res interface{}) interface{} {
+	panic("implement me")
+}
+
+func main() {
+
+	executor := task.NewExecutor()
+	defer executor.Release()
+	var ft []task.Future
+	var ids [2]int
+	for i := 0; i < 2; i++ {
+		c := i
+		fmt.Println(&ids[i]," rs",c)
+		ft = append(ft, executor.AddSimpleCallable(func() interface{} {
+			time.Sleep(2 * time.Second)
+			fmt.Printf("rs%d\n", c)
+			//return c
+			return &task.SimpleResult{
+				Err: nil,
+				Ret: c,
+			}
+		}, &ids[i]))
+	}
+	for _, f := range ft {
+		fmt.Println(f.Get())
+	}
+
+}
+
+type ad struct {
+	a interface{}
+	b time.Time
+}
+
+func main7() {
+
+	a := ad{}
+	c := &a.a
+	f := 12
+	*c = f
+	fmt.Println(a.a)
+
 }
