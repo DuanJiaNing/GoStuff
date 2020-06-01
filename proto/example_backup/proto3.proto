@@ -1,0 +1,16 @@
+syntax = "proto3";
+package example;
+
+import "google/protobuf/wrappers.proto";
+
+message Person3 {
+    float value = 1;
+    google.protobuf.FloatValue value2 = 2;
+}
+
+// test3: p.value=1, p.value2=nil       -> json: {"p":{"value":1}}
+// test4: p.value=0, p.value2.value=0   -> json: {"p":{"value2":0}}
+// test5: p.value=1, p.value2.value=0   -> json: {"p":{"value":1,"value2":0}}
+message Data3 {
+    Person3 p = 1;
+}

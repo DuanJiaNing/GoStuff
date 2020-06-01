@@ -1,0 +1,14 @@
+syntax = "proto2";
+package example;
+
+message Person2 {
+    optional float value = 1;
+    optional string str_value = 2;
+}
+
+// test1: p.value=nil    -> json: {"p":{}}
+// test2: p.value=0      -> json: {"p":{"value":0}}
+// test7: p.str_value="" -> json: {"p":{"strValue":""}}
+message Data2 {
+    required Person2 p = 1;
+}
