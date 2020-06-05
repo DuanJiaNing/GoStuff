@@ -1,55 +1,34 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
-	"github.com/gorilla/mux"
-	. "net/http"
-	"os"
+	"io"
 )
 
-type OptionsHandler struct {
+type str struct {
+	s        []byte
+	i        int64 // current reading index
+	prevRune int   // index of previous rune; or < 0
 }
-
-type MyHandler struct {
-}
-
-type QuitHandler struct {
-}
-
-func (h *QuitHandler) ServeHTTP(w ResponseWriter, r *Request) {
-	fmt.Println("server dead")
-	os.Exit(1)
-}
-
-func (h *OptionsHandler) ServeHTTP(w ResponseWriter, r *Request) {
-	fmt.Printf("OptionsHandler: %s : %s\n", r.Method, r.URL)
-}
-
-func (h *MyHandler) ServeHTTP(w ResponseWriter, r *Request) {
-	fmt.Printf("MyHandler: %s : %s\n", r.Method, r.URL)
-}
-
-var Router = mux.NewRouter()
 
 func main() {
 
-	optionsHandler := &OptionsHandler{}
-	Router.PathPrefix("/api").Methods(MethodOptions).Handler(optionsHandler)
-
-	myHandler := &MyHandler{}
-	subRouter := Router.PathPrefix("/api").Subrouter()
-	subRouter.Path("/quit").Methods(MethodGet).Handler(&QuitHandler{})
-	subRouter.Path("/m").Methods(MethodGet).Handler(myHandler)
-	subRouter.Path("/b").Methods(MethodGet).Handler(myHandler)
-	subRouter.Path("/a").Methods(MethodGet).Handler(myHandler)
-	subRouter.Path("/a").Methods(MethodOptions).Handler(myHandler) // OPTIONS request still handed by OptionsHandler
-
-	srv := &Server{
-		Handler: Router,
-		Addr:    "localhost:8080",
+	var s *str
+	if s == nil {
+		fmt.Println("1")
 	}
 
-	fmt.Println("server started...")
-	srv.ListenAndServe()
+	var p *bytes.Reader
+	if p != nil {
+		fmt.Println("2")
+	}
+	c(p)
+	c(nil)
+}
 
+func c(b io.Reader) {
+	if b != nil {
+		fmt.Println("3")
+	}
 }

@@ -65,57 +65,92 @@ func (e *Executor) Release() {
 // Future represents the result of an asynchronous computation. The result can only be retrieved
 // using method Get when the computation has completed, blocking if necessary until it is ready.
 type Future interface {
-	Get() interface{}
+	Get() (interface{}, error)
+	Load() error
 }
 
 // ResultLoader determines the final value that the Get method of Future will get.
 type ResultLoader interface {
-	Load(res interface{}) interface{}
+	Load(res interface{}) error
+}
+
+// The ResultLoaderFunc type is an adapter to allow the use of ordinary functions as a ResultLoader.
+type ResultLoaderFunc func(res interface{}) error
+
+// Load calls f(res).
+func (f ResultLoaderFunc) Load(res interface{}) error {
+	return f(res)
 }
 
 // Callable is a task that returns a result.
-type Callable func() interface{}
+type Callable func() (interface{}, error)
 
 type loadableTask struct {
 	call Callable
 
 	resultChan chan interface{}
+	errChan    chan error
 	loader     ResultLoader
 }
 
+var nilVal = 1
+var nilError = errors.New("")
+
 // Exec calls call() and return the result to result channel.
 func (c loadableTask) Exec() {
-	c.resultChan <- c.call()
+	res, err := c.call()
+	if err != nil {
+		c.errChan <- err
+	} else {
+		c.errChan <- nilError
+	}
+
+	if res != nil {
+		c.resultChan <- res
+	} else {
+		c.resultChan <- &nilVal
+	}
 }
 
 // Get will wait if necessary for the computation to complete, and then retrieves its result
 // with ResultLoader.
-func (c loadableTask) Get() interface{} {
-	return c.loader.Load(<-c.resultChan)
+func (c loadableTask) Get() (interface{}, error) {
+	err := <-c.errChan
+	if err == nilError {
+		err = nil
+	}
+
+	res := <-c.resultChan
+	if res == &nilVal {
+		res = nil
+	}
+
+	return res, err
 }
 
-// The ResultLoaderFunc type is an adapter to allow the use of ordinary functions as a ResultLoader.
-type ResultLoaderFunc func(res interface{}) interface{}
+// TODO add annotations
+func (c loadableTask) Load() error {
+	if c.loader == nil {
+		return errors.New("no loader provide")
+	}
 
-// Load calls f(res).
-func (f ResultLoaderFunc) Load(res interface{}) interface{} {
-	return f(res)
-}
+	get, err := c.Get()
+	if err != nil {
+		return err
+	}
 
-// NewStandardResultLoader return a ResultLoader with unchanged original results.
-func NewStandardResultLoader() ResultLoader {
-	return ResultLoaderFunc(func(res interface{}) interface{} {
-		return res
-	})
+	return c.loader.Load(get)
 }
 
 // SubmitCallable submit callable task to execute queue.
 func (e *Executor) SubmitCallable(call Callable, loader ResultLoader) Future {
 	e.wg.Add(1)
 	rc := make(chan interface{})
+	errc := make(chan error)
 	t := loadableTask{
 		call:       call,
 		resultChan: rc,
+		errChan:    errc,
 		loader:     loader,
 	}
 
@@ -123,44 +158,21 @@ func (e *Executor) SubmitCallable(call Callable, loader ResultLoader) Future {
 	return t
 }
 
-// SimpleResult combines an error and a result value. Using SimpleResultLoader, the result value will
-// be injected into the target through reflection mechanism, and the error can be retrieved through
-// the Get method of Future.
-type SimpleResult struct {
-	Err error
-	Ret interface{}
-}
-
-// NewSimpleResult return a Result.
-func NewSimpleResult(ret interface{}, err error) *SimpleResult {
-	return &SimpleResult{
-		Err: err,
-		Ret: ret,
-	}
-}
-
-// NewSimpleResultLoader return a SimpleResultLoader.
-func NewSimpleResultLoader(dst interface{}) ResultLoader {
-	return ResultLoaderFunc(func(res interface{}) interface{} {
-		r, ok := res.(*SimpleResult)
-		if !ok {
-			return errors.New("result is not type of SimpleResult Ptr")
+// NewReflectionLoader return a SimpleResultLoader.
+func NewReflectionLoader(dst interface{}) ResultLoader {
+	return ResultLoaderFunc(func(res interface{}) error {
+		if reflect.TypeOf(dst).Kind() != reflect.Ptr {
+			return errors.New("need pointer to dst")
 		}
 
-		if r.Err != nil {
-			return r.Err
-		}
-
-		if reflect.TypeOf(dst).Kind() == reflect.Ptr {
-			reflect.ValueOf(dst).Elem().Set(reflect.ValueOf(r.Ret))
-		}
+		reflect.ValueOf(dst).Elem().Set(reflect.ValueOf(res))
 		return nil
 	})
 }
 
-// SubmitSimpleCallable is a short way to submit task those returns a SimpleResult.
-func (e *Executor) SubmitSimpleCallable(call Callable, dst interface{}) Future {
-	return e.SubmitCallable(call, NewSimpleResultLoader(dst))
+// Submit is a short way to submit task those returns a SimpleResult.
+func (e *Executor) Submit(call Callable, dst interface{}) Future {
+	return e.SubmitCallable(call, NewReflectionLoader(dst))
 }
 
 // Runnable represents a task with no return value.
