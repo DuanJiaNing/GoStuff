@@ -30,6 +30,14 @@ var marshaler = jsonpb.Marshaler{
 }
 
 func main() {
+	i := int32(1212891289)
+	p := &example.Person{
+		Value: &i,
+	}
+	write("p6", p)
+}
+
+func main2() {
 
 	fv := float32(0)
 	pNil := &example.Data2{

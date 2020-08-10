@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"github.com/gorilla/mux"
 	"io"
 	"io/ioutil"
 	"log"
@@ -8,10 +10,18 @@ import (
 )
 
 func main() {
-	http.HandleFunc("/fu", fileUpload)
+	r := mux.NewRouter()
+	r.HandleFunc("/test/{type:(?:ac|b123)}", test)
+	//http.HandleFunc("/fu", fileUpload)
+	http.Handle("/", r)
+
 	if err := http.ListenAndServe(":1313", nil); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func test(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("www")
 }
 
 func fileUpload(w http.ResponseWriter, r *http.Request) {
