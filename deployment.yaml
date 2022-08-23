@@ -1,0 +1,36 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  labels:
+    name: slackbot
+  name: slackbot
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      name: slackbot
+  template:
+    metadata:
+      labels:
+        name: slackbot
+    spec:
+      containers:
+        - name: slackbot
+          image: 478531092133.dkr.ecr.cn-northwest-1.amazonaws.com.cn/slackbot:latest
+          imagePullPolicy: Always
+          command: ["/app/slackbot", "--config=config.yaml"]
+          env:
+            - name: ENV
+              value: prod
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 512m
+              memory: 1024Mi
+          terminationMessagePolicy: FallbackToLogsOnError
+      terminationGracePeriodSeconds: 60
